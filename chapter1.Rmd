@@ -1,7 +1,7 @@
 
 # About the project
 
-*Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you should use R Markdown syntax.*
+This Course has opened up a new dimension for learning data science for the persons with different background
 
 ```{r}
 # This is a so-called "R chunk" where you can write R code.
@@ -9,5 +9,5 @@
 date()
 
 ```
-The text continues here.
+I came to know about this course in weboodi
 
