@@ -1,13 +1,104 @@
-# Insert chapter 2 title here
+# Regression and model validation
+##by Md Karim Uddin
 
-*Describe the work you have done this week and summarize your learning.*
+**Part1**
 
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
 
 ```{r}
 date()
+
 ```
 
-Here we go again...
+Reading the dataset to start the analysis.
+
+
+```{r}
+learning2014<-read.table( "learning2014.csv", header = TRUE,sep = ",", stringsAsFactors = FALSE)
+
+```
+
+``` {r}
+dim(learning2014) 
+```
+
+
+We can see that the table consists of 166 observations and 7 variables (i.e. 166 rows and 7 columns when viewed as a table).
+
+Now, let’s look at the structure of the dataset
+
+
+```{r}
+str(learning2014)
+```
+
+As we can see, the data set consists of 166 observations of 7 variables. The column “gender” gives the respondents gender (M = male, F= Female) and the column “Age” their age in years. The column “attitude” describes the respondents attitude towards statistics and the column “points” their totalt points in an exam. The columns “deep”, “stra” and “sur” give the mean points to questions about deep, strategic and surface learning, respectively.
+
+Let’s check the summary of the table, to know how the data is distributed.
+
+```{r}
+summary(learning2014)
+```
+
+```{r}
+female <- sum(learning2014$gender == "F")
+male <- sum(learning2014$gender == "M")
+print(paste("The datset contains", toString(male), "male and", toString(female), "female students"))
+```
+From above we can see the means, medians, ranges (min, max) and quartiles of the variables. For example, the students’ ages range from 21 to 55 with a mean of 25.5 and a median of 22.
+
+110 of the students are female and 56 are male
+
+```{r}
+
+library(GGally)
+```
+
+
+```{r}
+library(ggplot2)
+
+```
+
+
+
+```{r}
+p1 <- ggpairs(learning2014, mapping = aes(), lower = list(combo = wrap("facethist", bins = 20)))
+
+```
+
+```{r}
+p1
+
+```
+Based on this, points seem to be positively correlated  with attitude (correlation coefficient 0.437, then strategic learning (0.146) and finally  negatively correlated with surface learning (-0.144).
+
+Lets  create a linear model including all these three variables and check the model.
+
+```{r}
+
+my_model <- lm(points ~ attitude + stra + surf, data = learning2014)
+
+summary(my_model)
+```
+We can see that attitude is the only significant variable in the model (i.e p < 0.05). The coefficient for attitude is 3.4 (i.e. when an increase of one in attitude score predicts an increase of 3.4 in exam points). Let’s get rid of the non-significant variables and fit a new model.
+
+```{r}
+new_model <- lm(points ~ attitude, data = learning2014)
+
+summary(new_model)
+```
+Now the model has a R^2 of 0.1906 and is still signficant (p<0.05). The R^2 value means that it is able to explain 19.06 % of the variance in the points.
+
+Next we’ll check the diagnostics
+
+```{r}
+plot(new_model, which = c(1, 2, 5))
+```
+
+The first plots shows the residuals vs the fitted values, i.e. how far away each data point is from our predicted model. THe data point should be equally far from our predicted model throughout the model (homoscedasticity). The residuals are equally distributed througout the predicted values.
+
+The second plot shows how residuals are distributed. The better they follow the Q-Q line, the more normal is their distributed. The residuals are sufficiently normal.
+
+The third plot shows the residuals vs leverage. The further to the right a point is, the more leverage it has, i.e. affects the model. This is useful to detect significant outliers. THe model does not suffer form significant outlie
+
+
