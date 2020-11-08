@@ -3,6 +3,7 @@
 
 This Course has opened up a new dimension for learning data science for the persons with different background
 
+
 ```{r}
 # This is a so-called "R chunk" where you can write R code.
 
