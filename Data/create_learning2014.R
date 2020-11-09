@@ -91,6 +91,5 @@ write.table(learning2014, file = "learning2014.csv", sep=",")
 library(GGally)
 library(ggplot2)
 
-library(knitr)
-library(rmarkdown)
-devtools::session_info()
+
+

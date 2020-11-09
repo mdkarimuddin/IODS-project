@@ -1,0 +1,29 @@
+# 3.Logistic regression
+##by Md Karim Uddin
+
+**Part1**
+
+
+
+```{r}
+date()
+
+```
+
+```{r}
+alc<-read.table( "alc.csv", header = TRUE,sep = ",", stringsAsFactors = FALSE)
+
+```
+
+
+
+``` {r}
+dim(alc) 
+```
+
+``` {r}
+str(alc) 
+```
+
+
+
