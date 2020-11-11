@@ -89,6 +89,9 @@ devtools::install_github("tidyverse/tidyverse")
 library(tidyr)
 # glimpse at the alc data
 glimpse(alc)
+
+
+
 # save the dataset alc-382 observations of 35 variables
 write.table(alc, file = "alc.csv", sep=",")
 

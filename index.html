@@ -453,7 +453,7 @@ summary {
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Wed Nov 11 21:49:48 2020&quot;</code></pre>
+<pre><code>## [1] &quot;Wed Nov 11 21:54:11 2020&quot;</code></pre>
 <p>I came to know about this course in weboodi</p>
 <hr />
 </div>
@@ -462,7 +462,7 @@ date()</code></pre>
 <p>##by Md Karim Uddin</p>
 <p><strong>Part1</strong></p>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Wed Nov 11 21:49:48 2020&quot;</code></pre>
+<pre><code>## [1] &quot;Wed Nov 11 21:54:11 2020&quot;</code></pre>
 <p>Reading the dataset to start the analysis.</p>
 <pre class="r"><code>learning2014&lt;-read.table( &quot;learning2014.csv&quot;, header = TRUE,sep = &quot;,&quot;, stringsAsFactors = FALSE)</code></pre>
 <pre class="r"><code>dim(learning2014) </code></pre>
@@ -570,7 +570,7 @@ summary(new_model)</code></pre>
 <p>##by Md Karim Uddin</p>
 <p><strong>Part1</strong></p>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Wed Nov 11 21:49:55 2020&quot;</code></pre>
+<pre><code>## [1] &quot;Wed Nov 11 21:54:16 2020&quot;</code></pre>
 <pre class="r"><code>alc&lt;-read.table( &quot;alc.csv&quot;, header = TRUE,sep = &quot;,&quot;, stringsAsFactors = FALSE)</code></pre>
 <p>Dimension of the data</p>
 <pre class="r"><code>dim(alc) </code></pre>
@@ -749,7 +749,7 @@ loss_func(class = alc$high_use, prob = alc$probability)</code></pre>
 cv &lt;- cv.glm(data = alc, cost = loss_func, glmfit = m, K = 10)
 # average number of wrong predictions in the cross validation
 cv$delta[1]</code></pre>
-<pre><code>## [1] 0.2539267</code></pre>
+<pre><code>## [1] 0.2565445</code></pre>
 <hr />
 <p>(more chapters to be added similarly as we proceed with the course!)</p>
 </div>
