@@ -1,0 +1,305 @@
+# 4.Clustering and classification
+## by Md Karim Uddin
+
+
+
+
+```{r}
+date()
+
+```
+
+Lets access the MASS library and "Boston" data
+
+```{r}
+
+library(MASS)
+
+data("Boston")
+```
+
+Now, we can explore the data set 
+
+
+```{r}
+
+# explore the dataset
+str(Boston)
+summary(Boston)
+
+
+```
+
+We can see that "Boston"data frame has 506 rows and 14 columns.The data contains information on per capita crime rate, average number of rooms per dwelling and so on.
+
+Lets see the possible graphical presentation can be made from the existing variables 
+```{r}
+
+
+
+pairs(Boston)
+
+```
+
+Lets install corrplot package for graphical presentation
+
+```{r}
+library(magrittr)
+library(knitr)
+library(plyr)
+
+library(corrplot)
+        
+        
+
+```
+Lets access the tidyverse and MASS library
+
+```{r}
+library(tidyverse)
+library(MASS)
+        
+        
+
+```
+Lets make the correlation matrix and visualize
+
+
+
+```{r}
+
+cor_matrix<-cor(Boston) 
+
+cor_matrix
+
+corrplot(cor_matrix, method="circle")
+
+
+```
+Correlation plot visualizes all the correlations among variables in numbers as scale.The range of correlation coefficient lies between -1 and +1. you can see the different round circles based on their strength of correlation.
+
+
+
+
+
+```{r}
+
+
+cor_matrix<-cor(Boston) %>% round(digits = 2)
+
+
+cor_matrix
+
+
+corrplot(cor_matrix, method="circle", type="upper", cl.pos="b", tl.pos="d", tl.cex = 0.6)
+```
+Now i will center and standardize variables and then se the summaries of the scaled variables.After that i will check the class of the boston_scaled object. Then change the object to data frame.
+
+```{r}
+
+boston_scaled <- scale(Boston)
+
+summary(boston_scaled)
+
+class(boston_scaled)
+  
+boston_scaled<- as.data.frame(boston_scaled)
+
+
+```
+
+Lets create a factor variable first-
+
+Lets check the summary of the scaled crime rate and  create a quantile vector of crim and print it.Then create a categorical variable 'crime' and  look at the table of the new factor crime. After that  remove the original crim from the dataset. Finally, add the new categorical value to scaled data
+```{r}
+
+
+summary(boston_scaled$crim)
+
+
+bins <- quantile(boston_scaled$crim)
+bins
+
+
+crime <- cut(boston_scaled$crim, breaks = bins, include.lowest = TRUE, labels = c("low", "med_low", "med_high", "high"))
+
+
+table(crime)
+
+
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+
+
+boston_scaled <- data.frame(boston_scaled, crime)
+
+
+```
+
+
+
+Lets divide the dataset to train and test sets, so that 80% of the data belongs to the train set
+
+
+```{r}
+ 
+n <- nrow(boston_scaled)
+
+
+ind <- sample(n,  size = n * 0.8)
+
+
+train <- boston_scaled[ind,]
+
+
+test <- boston_scaled[-ind,]
+
+
+correct_classes <- test$crime
+
+
+test <- dplyr::select(test, -crime)
+
+```
+
+
+Linear Discriminant analysis
+Lets fit the linear discriminant analysis (LDA) on the train set.
+
+ The target variable in LDA needs to be categorical, so crime rate  is the target variable and all the other variables are predictors.
+ 
+LDA is based on assumptions that variables are normally distributed and each variable has the same variance. we did the scaling to the variables so this should be OK.
+
+```{r}
+
+# linear discriminant analysis
+lda.fit <- lda(crime ~ ., data = train)
+
+# print the lda.fit object
+lda.fit
+
+# the function for lda biplot arrows
+lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "orange", tex = 0.75, choices = c(1,2)){
+  heads <- coef(x)
+  arrows(x0 = 0, y0 = 0, 
+         x1 = myscale * heads[,choices[1]], 
+         y1 = myscale * heads[,choices[2]], col=color, length = arrow_heads)
+  text(myscale * heads[,choices], labels = row.names(heads), 
+       cex = tex, col=color, pos=3)
+}
+
+# target classes as numeric
+classes <- as.numeric(train$crime)
+
+# plot the lda results
+plot(lda.fit, dimen = 2, col = classes, pch = classes)
+lda.arrows(lda.fit, myscale = 1)
+```
+Proportion of trace is the variance of between groups , here LD1 94% explains the between groups variance.
+
+The arrows are drawn based on the coefficients. You can find 5 distinct classess. 
+
+Predict LDA
+
+Lets predict the classes with the LDA model -test data.
+
+```{r}
+# predict classes with test data
+lda.pred <- predict(lda.fit, newdata = test)
+
+# cross tabulate the results
+table(correct = correct_classes, predicted = lda.pred$class)
+
+```
+the model can not predict very well
+
+distance measures
+
+
+```{r}
+
+# load MASS and Boston
+library(MASS)
+data('Boston')
+
+# euclidean distance matrix
+dist_eu <- dist(Boston)
+
+# look at the summary of the distances
+summary(dist_eu)
+
+# manhattan distance matrix
+dist_man <- dist(Boston, method = 'manhattan')
+
+# look at the summary of the distances
+summary(dist_man)
+```
+Distances are totally different between these two distance methods.
+
+K-means clustering
+“It is an unsupervised method, that assigns observations to groups or clusters based on similarity of the objects.” In clustering, you don’t know the number of classes beforehand. “K-means calculates distances between centroids and datapoi
+
+
+
+```{r}
+
+# Boston dataset is available
+
+# k-means clustering
+km <-kmeans(Boston, centers = 4)
+
+# plot the Boston dataset with clusters
+pairs(Boston, col = km$cluster)
+
+```
+
+determine the k
+
+Lets find the best number of clusters:
+
+```{r}
+# Boston dataset is available
+set.seed(123)
+
+# determine the number of clusters
+k_max <- 10
+
+# calculate the total within sum of squares
+twcss <- sapply(1:k_max, function(k){kmeans(Boston, k)$tot.withinss})
+
+# visualize the results
+qplot(x = 1:k_max, y = twcss, geom = 'line')
+
+# k-means clustering
+km <-kmeans(Boston, centers = 2)
+
+# plot the Boston dataset with clusters
+pairs(Boston, col = km$cluster)
+
+
+```
+
+Optimal number of clusters might be 2, because there the total within cluster sum of squares (WCSS) changes radically.
+
+
+
+```{r}
+model_predictors <- dplyr::select(train, -crime)
+# check the dimensions
+dim(model_predictors)
+dim(lda.fit$scaling)
+# matrix multiplication
+matrix_product <- as.matrix(model_predictors) %*% lda.fit$scaling
+matrix_product <- as.data.frame(matrix_product)
+
+```
+
+
+Lets make a 3D plot
+
+```{r}
+library(plotly)
+plot_ly(x = matrix_product$LD1, y = matrix_product$LD2, z = matrix_product$LD3, type= 'scatter3d', mode='markers')
+
+```
+
+
