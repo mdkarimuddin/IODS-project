@@ -2,17 +2,41 @@
 
 hd <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human_development.csv", stringsAsFactors = F)
 
+
+hd <- hd %>% 
+  rename(
+    HDI = Human.Development.Index..HDI.,
+    GNIperCap = Gross.National.Income..GNI..per.Capita,
+    GNIrank_HDIrank = GNI.per.Capita.Rank.Minus.HDI.Rank,
+    EYE = Expected.Years.of.Education,
+    LEB = Life.Expectancy.at.Birth,
+    MYE = Mean.Years.of.Education
+  )
+
+
 gii <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/gender_inequality.csv", stringsAsFactors = F, na.strings = "..")
+
+
+gii <- gii %>% 
+  rename(GII = Gender.Inequality.Index..GII.,
+         MMR = Maternal.Mortality.Ratio,
+         ABR = Adolescent.Birth.Rate,
+         parRep = Percent.Representation.in.Parliament,
+         edu2F = Population.with.Secondary.Education..Female.,
+         edu2M = Population.with.Secondary.Education..Male.,
+         labF = Labour.Force.Participation.Rate..Female.,
+         labM = Labour.Force.Participation.Rate..Male.
+  )
+
+
 library(dplyr)
 library(tidyverse)
 colnames(gii)
 #define a new column edu2F_edu2M 
-gii <- mutate(gii, edu2F_edu2M = Population.with.Secondary.Education..Female. /Population.with.Secondary.Education..Male. )
-
+gii <- mutate(gii, edu2F_edu2M = edu2F/edu2M)
 #define a new column edu2F_edu2M 
 
-gii <- mutate(gii, labF_labM = Labour.Force.Participation.Rate..Female./ Labour.Force.Participation.Rate..Male.)
-
+gii <- mutate(gii, labF_labM =labF/labM)
 
 #Merge dataset
 
@@ -29,25 +53,35 @@ summary(human)
 
 write.table(human, file = "human.csv", sep=",")
 
+# read the human data
+human <- read.table("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human1.txt", sep  =",", header = T)
+
+
+
+# look at the (column) names of human
+names(human)
+
+# look at the structure of human
+
+str(human)
+# print out summaries of the variables
+summary(human)
+
 
 #String manipulation
 
-library(tidyr)
 library(stringr)
-
-
-# tidyr package and human are available
-
-# access the stringr package
-library(stringr)
-
+library(tidyverse)
 # look at the structure of the GNI column in 'human'
 
 str(human$GNI)
 # remove the commas from GNI and print out a numeric version of it
-str_replace(human$GNI, pattern=",", replace ="") %>% as.numeric
 
 
+human$GNI = str_replace(human$GNI, pattern=",", replace ="") %>% as.numeric
+
+str(human$GNI)
+str(human)
 
 #Dealing with not available (NA) values
 
@@ -56,48 +90,31 @@ str_replace(human$GNI, pattern=",", replace ="") %>% as.numeric
 # columns to keep
 keep <- c("Country", "Edu2.FM", "Labo.FM", "Life.Exp", "Edu.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
 
-# select the 'keep' columns
-human <- select(human, one_of(keep))
 
-# print out a completeness indicator of the 'human' data
-complete.cases(human)
-
-# print out the data along with a completeness indicator as the last column
-data.frame(human[-1], comp = complete.cases(human))
-
-# filter out all rows with NA values
-human_ <- filter(human, complete.cases(human))
+library(dplyr)
+library(corrplot)
 
 
+#Columns to keep
 
-# human without NA is available
-
-# look at the last 10 observations
-tail(human, 10)
-
-# last indice we want to keep
-last <- nrow(human) - 7
-
-# choose everything until the last 7 observations
-human_ <- human[1:last, ]
-
-# add countries as rownames
-rownames(human) <- human$Country
+human <- human[keep]
 
 
-# modified human, dplyr and the corrplot functions are available
+#Drop the NA values
+human_ <-human%>%drop_na()
+# filter out the the last rows of data
+last<-nrow(human_)-7
+#Choose everything untill last 7 rows
+human_ <- human_[1:last, ]
+
+rownames(human_) <- human_$Country
 
 # remove the Country variable
-human_ <- select(human, -Country)
+human_ <- select(human_, -Country)
 
-# Access GGally
-library(GGally)
+human<-human_
 
-# visualize the 'human_' variables
-ggpairs(human_)
-
-# compute the correlation matrix and visualize it with corrplot
-cor(human_)%>%corrplot()
+write.table(human, file = "human.csv", sep=",")
 
 
 

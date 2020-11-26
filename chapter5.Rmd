@@ -1,0 +1,358 @@
+# 5.Dimensionality reduction techniques
+## by Md Karim Uddin
+
+```{r}
+date()
+
+```
+
+lets read the human data
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(GGally)
+library(corrplot)
+human<-read.table( "human.csv", header = TRUE,sep = ",", stringsAsFactors = FALSE)
+```
+
+Lets see the structure of the dataset
+```{r}
+str(human)
+
+```
+We can see that the "human" data contains 155 rows with 8 variables. Columns are life expectancy (Life.Exp), maternal mortality rate (Mat.Mor), expected years of schooling (Edu.Exp), gross national income per capita (GNI), adolescent birth rate (ado.birth), proportion of women in parliament (Parli.F), female/male ratio in labour force (Labo.FM) and female/male ratio of secondary level education (Edu2.FM). rows are set as country name.
+
+
+Lets see the summary of the dataset
+
+```{r}
+summary(human)
+
+```
+Values of the variables are different from each others
+
+Let's visualize the dataset
+
+```{r}
+ggpairs(human)
+
+```
+It can be seen that most of the variables are not normally distributed. 
+i.e. GNI and Mat.Mor rightly skewed.
+
+
+let's see the correlation between variables
+
+```{r}
+cor_matrix <- cor(human)
+corrplot(cor_matrix, method="circle", type="upper", cl.pos="b", tl.pos="d", tl.cex = 0.6)
+
+```
+There are some correlation found between variables.It can be observed that
+maternal mortality has a negative correlation with Life.Exp, Edu.Exp and Edu2.FM and a positive correlation with Ado.Birth.Moreveover,  Life expectancy  has a positive correlation with Edu.Exp, GNI and Edu2.FM.
+
+
+
+Principal component analysis
+
+Let’s perform a PCA  and do a bi-plot for the first two principal components(non-standardized data)
+
+```{r}
+
+pca_human <- prcomp(human)
+biplot(pca_human, choices = 1:2, cex = c(0.5, 0.5))
+
+```
+We can see that PC1 stands for 99.999 % of the variance, while PC2 stands for 0.001 %. This might be due to "GNI" effect.
+
+Lets standardize the variables to see the real effect
+
+```{r}
+
+human_std <- scale(human)
+pca_human_std <- prcomp(human_std)
+  
+summary(pca_human_std)
+  
+biplot(pca_human_std, choices = 1:2, cex = c(0.8, 1), col = c("grey40", "deeppink2"))
+
+```
+The result is totally different from non-standardized data.Looking PC1 and PC2, they now explaining 53.6% and 16.2 %, respectively.It shows that higher Edu.Exp, GNI, Edu2.FM and Life.Exp drive PC1 to the left whereas higher Mat.Mor and Ado.Birth to the right. PC2 is dominated by Parl.F and Labo.FM.
+
+
+
+Now, let's load the tea dataset and see the structure and dimension
+
+```{r}
+
+# the tea dataset and packages FactoMineR, ggplot2, dplyr and tidyr are available
+library(FactoMineR)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+data(tea)
+
+str(tea)
+dim(tea)
+
+
+
+
+```
+
+The dataset tea consists of 300 observations of 36 variables. 
+
+Let's include only the "Tea", "How", "how", "sugar", "where", "lunch" variables
+
+```{r}
+# column names to keep in the dataset
+keep_columns <- c("Tea", "How", "how", "sugar", "where", "lunch")
+
+# select the 'keep_columns' to create a new dataset
+tea_time <- select(tea, one_of(keep_columns))
+
+# look at the summaries and structure of the data
+summary(tea_time)
+str(tea_time)
+
+
+
+```
+Now, The dataset tea contains 300 observations of 6 variables. 
+
+
+
+```{r}
+# visualize the dataset
+gather(tea_time) %>% ggplot(aes(value)) + facet_wrap("key", scales = "free") + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+
+```
+
+Above barcharts illustrate the participant’s answers to a questionnaire survey.
+
+
+ Multiple correspondence analysis
+
+```{r}
+# tea_time is available
+# multiple correspondence analysis
+mca <- MCA(tea_time, graph = FALSE)
+# summary of the model
+summary(mca)
+
+
+```
+
+
+```{r}
+# visualize MCA
+plot(mca, invisible=c("ind"), habillage = "quali")
+
+```
+
+
+
+
+```{r}
+# multiple correspondence analysis and visualize
+mca <- MCA(tea_time, graph = T)
+
+```
+
+Finally, examining the MCA factor map for the variables, those who buy/use unpackaged tea also tend to buy from tea shops whereas as those who use/buy tea bags tend to buy from chain stores.
+
+One the one hand,variable sugar has most correlation with dimension 1. On the other hand , the variable lunch mostly correlated with dimension 2.
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+
+
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```
+
+
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```
+
+
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```
+
+
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```
